@@ -13,12 +13,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Flight {
+model PlaneTrip {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  origin        String   
+  origin        String
   destination   String
   departureTime DateTime @map("departure_time")
-  flightTime    Int      @map("flight_time")
-  plane         String
-  @@map("flight")
+  flightTime    Int      @map("arrival_time")
+  createdAt     DateTime @map("created_at")
+  deletedAt     DateTime @map("deleted_at")
+  planeId       String
+  @@map("planeTrip")
+
+  // Relations
+  groundTime GroundTime[] @relation("PlaneGroundTime")
+
+  @@index([planeId])
+}
+
+model GroundTime {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  planeId     String
+  destination String
+  groundTime  String
+  duration    Int
+  createdAt   DateTime @map("created_at")
+  deletedAt   DateTime @map("deleted_at")
+  @@map("groundTime")
+
+  // Relations
+  planTrip PlaneTrip[] @relation("PlanGroundTime", fields: [planeId], references: [planeId])
+
+  @@index([planeId])
 }

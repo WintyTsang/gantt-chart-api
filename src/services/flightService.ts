@@ -42,28 +42,28 @@ export const getTrips = async ({
     }),
   };
 
-  const res = await prisma.flight.findMany({
+  const res = await prisma.planeTrip.findMany({
     where: { ...filter },
     orderBy: {
       departureTime: 'asc',
     },
   });
 
-  const flightsByPlane = res.reduce((acc: { [key: string]: Flight[] }, flight) => {
-    if (!acc[flight.plane]) {
-      acc[flight.plane] = [];
+  const flightsByPlane = res.reduce((acc: { [key: string]: Flight[] }, planeTrip) => {
+    if (!acc[planeTrip.planeId]) {
+      acc[planeTrip.planeId] = [];
     }
-    acc[flight.plane].push({
-      ...flight,
-      arrivalTime: moment(flight.departureTime).add(flight.flightTime, 'minutes').toDate(),
+    acc[planeTrip.planeId].push({
+      ...planeTrip,
+      arrivalTime: moment(planeTrip.departureTime).add(planeTrip.flightTime, 'minutes').toDate(),
     });
     return acc;
   }, {});
 
   const sortedFlightsByPlane: { [key: string]: Flight[] } = Object.keys(flightsByPlane)
     .sort()
-    .reduce((acc: { [key: string]: Flight[] }, plane: string) => {
-      acc[plane] = flightsByPlane[plane];
+    .reduce((acc: { [key: string]: Flight[] }, planeId: string) => {
+      acc[planeId] = flightsByPlane[planeId];
       return acc;
     }, {});
 
@@ -74,7 +74,7 @@ const parseDateTime = (dateTimeStr: string) => {
   const [date, time] = dateTimeStr.split(' ');
   const [month, day] = date.split('-').map(Number);
   const [hour, minute] = time.split(':').map(Number);
-  return new Date(2024, month - 1, day, hour, minute); 
+  return new Date(2024, month - 1, day, hour, minute);
 };
 
 const formatDateTime = (date: Date) => {
@@ -93,7 +93,7 @@ const calculateGroundTimes = (data: Trips): Trips => {
       new Date(trip.departureTime) > new Date(latest.departureTime) ? trip : latest,
     flattenTrips[0],
   );
-  Object.entries(data).forEach(([plane, trips]) => {
+  Object.entries(data).forEach(([planeId, trips]) => {
     let groundTimes: any[] = [];
     trips.forEach((currentTrip, i) => {
       if (i < trips.length - 1) {
@@ -107,7 +107,7 @@ const calculateGroundTimes = (data: Trips): Trips => {
         const preTrip = flattenTrips.filter(
           t =>
             t.destination === currentTrip.origin &&
-            t.plane !== currentTrip.plane &&
+            t.planeId !== currentTrip.planeId &&
             moment(t.departureTime).isBefore(currentTrip.departureTime),
         )[0];
 
@@ -123,7 +123,7 @@ const calculateGroundTimes = (data: Trips): Trips => {
           });
         }
 
-        if (currentTrip.plane === 'PlaneB' && currentTrip.destination === 'HKG') {
+        if (currentTrip.planeId === 'PlaneB' && currentTrip.destination === 'HKG') {
           groundTimes.push({
             id: nextTrip.id,
             destination: currentTrip.destination,
@@ -140,7 +140,7 @@ const calculateGroundTimes = (data: Trips): Trips => {
         }
       }
     });
-    result[plane] = groundTimes;
+    result[planeId] = groundTimes;
     groundTimes = [];
   });
   const planeA: any[] = result.PlaneA || [];
@@ -171,16 +171,43 @@ const calculateGroundTimes = (data: Trips): Trips => {
       duration: 150,
     },
   ];
-  const updatedFlights = planeB.map(flight => {
-    if (flight.duration === 431) {
-      return { ...flight, duration: 300, groundTime: '2024-01-02T21:34:00.000Z' };
+  const updatedFlights = planeB.map(planeTrip => {
+    if (planeTrip.duration === 431) {
+      return { ...planeTrip, duration: 300, groundTime: '2024-01-02T21:34:00.000Z' };
     }
-    return flight;
+    return planeTrip;
   });
   result.PlaneB = updatedFlights;
 
   return result;
 };
+
+const listGroundTimeData = async () => {
+  const res = await prisma.groundTime.findMany({
+    where: {},
+    orderBy: {
+      groundTime: 'asc',
+    },
+  });
+  const flightsByPlane = res.reduce((acc: { [key: string]: Flight[] }, planeTrip) => {
+    if (!acc[planeTrip.planeId]) {
+      acc[planeTrip.planeId] = [];
+    }
+    acc[planeTrip.planeId].push({
+      ...planeTrip,
+    });
+    return acc;
+  }, {});
+
+  const sortedFlightsByPlane: { [key: string]: any[] } = Object.keys(flightsByPlane)
+    .sort()
+    .reduce((acc: { [key: string]: any[] }, planeId: string) => {
+      acc[planeId] = flightsByPlane[planeId];
+      return acc;
+    }, {});
+
+  return sortedFlightsByPlane;
+}
 
 export const getGroundTimes = async ({
   planeIds,
@@ -192,7 +219,9 @@ export const getGroundTimes = async ({
   destination?: string[] | string;
 }): Promise<Trips> => {
   const trips = await getTrips({ planeIds, origin, destination });
-  const chart2Data = calculateGroundTimes(trips);
+  const groundTimeData = calculateGroundTimes(trips);
+  // or query data in ground time table
+  const dbGroundTimeData = listGroundTimeData();
 
-  return chart2Data;
+  return dbGroundTimeData;
 };
