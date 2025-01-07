@@ -199,15 +199,14 @@ const listGroundTimeData = async () => {
     }
     acc[planeTrip.planeId].push({
       id: planeTrip.id,
-      origin: '', // 添加缺失的属性
+      origin: '',
       destination: planeTrip.destination,
-      departureTime: new Date(), // 添加缺失的属性
-      flightTime: 0, // 添加缺失的属性
+      departureTime: new Date(),
+      flightTime: 0,
       createdAt: planeTrip.createdAt,
       deletedAt: planeTrip.deletedAt,
       planeId: planeTrip.planeId,
-      groundId: '', // 添加缺失的属性
-      arrivalTime: planeTrip.groundTime, // 添加缺失的属性
+      arrivalTime: planeTrip.groundTime,
       groundTime: planeTrip.groundTime,
       duration: planeTrip.duration,
     });
@@ -235,6 +234,8 @@ export const getGroundTimes = async ({
 }): Promise<Trips> => {
   const trips = await getTrips({ planeIds, origin, destination });
   const groundTimeData = calculateGroundTimes(trips);
+  // if ground time updated, need to update the plane trip id field
+  // TODO:
   // or query data in ground time table
   const dbGroundTimeData = listGroundTimeData();
 

@@ -5,7 +5,6 @@ import prisma from './prisma-client';
 const main = async () => {
   // eslint-disable-next-line no-console
   console.log('Seeding Database');
-  const groundId = new ObjectId().toString();
 
   try {
     console.log('Creating planeTrip data...');
@@ -19,7 +18,6 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
         {
           origin: 'NRT',
@@ -28,7 +26,6 @@ const main = async () => {
           flightTime: 230,
           planeId: 'PlaneA',
           createdAt: new Date(),
-          groundId,
         },
         {
           origin: 'TPE',
@@ -38,7 +35,6 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
         // section 2
         {
@@ -49,7 +45,6 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
         {
           origin: 'HKG',
@@ -59,7 +54,6 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
         {
           origin: 'NGO',
@@ -69,7 +63,6 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
         // section 3
         {
@@ -80,7 +73,6 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
         {
           origin: 'HKG',
@@ -90,7 +82,6 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
-          groundId,
         },
       ],
     });
@@ -105,6 +96,9 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneA', destination: 'HKG' }
+          }
         }, {
           destination: 'NRT',
           groundTime: moment.tz("2024-01-02 05:55", "UTC").tz("Asia/Shanghai").toDate(),
@@ -112,6 +106,9 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneA', destination: 'NRT' }
+          }
         }, {
           destination: 'TPE',
           groundTime: moment.tz("2024-01-02 12:29", "UTC").tz("Asia/Shanghai").toDate(),
@@ -119,6 +116,9 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneA', destination: 'TPE' }
+          }
         }, {
           destination: 'HKG',
           groundTime: moment.tz("2024-01-02 15:50", "UTC").tz("Asia/Shanghai").toDate(),
@@ -126,6 +126,9 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneA', destination: 'HKG' }
+          }
         }, {
           destination: 'HKG',
           groundTime: moment.tz("2024-01-02 04:30", "UTC").tz("Asia/Shanghai").toDate(),
@@ -133,6 +136,9 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneB', destination: 'HKG' }
+          }
         }, {
           destination: 'NGO',
           groundTime: moment.tz("2024-01-02 13:11", "UTC").tz("Asia/Shanghai").toDate(),
@@ -140,6 +146,9 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneB', destination: 'NGO' }
+          }
         }, {
           destination: 'HKG',
           groundTime: moment.tz("2024-01-02 21:34", "UTC").tz("Asia/Shanghai").toDate(),
@@ -147,6 +156,9 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneB', destination: 'HKG' }
+          }
         }, {
           destination: 'YVB',
           groundTime: moment.tz("2024-01-02 23:30", "UTC").tz("Asia/Shanghai").toDate(),
@@ -154,6 +166,9 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneA', destination: 'YVB' }
+          }
         }, {
           destination: 'HKG',
           groundTime: moment.tz("2024-01-02 14:30", "UTC").tz("Asia/Shanghai").toDate(),
@@ -161,6 +176,9 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneC', destination: 'HKG' }
+          }
         }, {
           destination: 'NRT',
           groundTime: moment.tz("2024-01-02 23:00", "UTC").tz("Asia/Shanghai").toDate(),
@@ -168,6 +186,9 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
+          planeTrip: {
+            connect: { planeId: 'PlaneA', destination: 'NRT' }
+          }
         },
       ],
     });
