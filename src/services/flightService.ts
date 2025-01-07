@@ -1,15 +1,15 @@
 import moment from 'moment';
-import { Flight as PrismaFlight } from '@prisma/client';
+import { PlaneTrip as PrismaFlight } from '@prisma/client';
 import { ObjectId } from 'bson';
 import prisma from '../../prisma/prisma-client';
 
-interface Flight extends PrismaFlight {
+interface PlaneTrip extends PrismaFlight {
   arrivalTime: Date;
   duration?: number;
 }
 
 export interface Trips {
-  [key: string]: Flight[];
+  [key: string]: PlaneTrip[];
 }
 
 export interface GroundTime {
@@ -19,6 +19,10 @@ export interface GroundTime {
     duration: number;
     groundTime: string;
   };
+}
+
+interface GroundTimeData extends PlaneTrip {
+  groundTime: Date;
 }
 
 export const getTrips = async ({
@@ -49,7 +53,7 @@ export const getTrips = async ({
     },
   });
 
-  const flightsByPlane = res.reduce((acc: { [key: string]: Flight[] }, planeTrip) => {
+  const flightsByPlane = res.reduce((acc: { [key: string]: PlaneTrip[] }, planeTrip) => {
     if (!acc[planeTrip.planeId]) {
       acc[planeTrip.planeId] = [];
     }
@@ -60,9 +64,9 @@ export const getTrips = async ({
     return acc;
   }, {});
 
-  const sortedFlightsByPlane: { [key: string]: Flight[] } = Object.keys(flightsByPlane)
+  const sortedFlightsByPlane: { [key: string]: PlaneTrip[] } = Object.keys(flightsByPlane)
     .sort()
-    .reduce((acc: { [key: string]: Flight[] }, planeId: string) => {
+    .reduce((acc: { [key: string]: PlaneTrip[] }, planeId: string) => {
       acc[planeId] = flightsByPlane[planeId];
       return acc;
     }, {});
@@ -189,12 +193,23 @@ const listGroundTimeData = async () => {
       groundTime: 'asc',
     },
   });
-  const flightsByPlane = res.reduce((acc: { [key: string]: Flight[] }, planeTrip) => {
+  const flightsByPlane = res.reduce((acc: { [key: string]: GroundTimeData[] }, planeTrip) => {
     if (!acc[planeTrip.planeId]) {
       acc[planeTrip.planeId] = [];
     }
     acc[planeTrip.planeId].push({
-      ...planeTrip,
+      id: planeTrip.id,
+      origin: '', // 添加缺失的属性
+      destination: planeTrip.destination,
+      departureTime: new Date(), // 添加缺失的属性
+      flightTime: 0, // 添加缺失的属性
+      createdAt: planeTrip.createdAt,
+      deletedAt: planeTrip.deletedAt,
+      planeId: planeTrip.planeId,
+      groundId: '', // 添加缺失的属性
+      arrivalTime: planeTrip.groundTime, // 添加缺失的属性
+      groundTime: planeTrip.groundTime,
+      duration: planeTrip.duration,
     });
     return acc;
   }, {});

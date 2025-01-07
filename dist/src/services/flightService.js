@@ -63,7 +63,6 @@ exports.getGroundTimes = exports.getTrips = void 0;
 var moment_1 = __importDefault(require("moment"));
 var bson_1 = require("bson");
 var prisma_client_1 = __importDefault(require("../../prisma/prisma-client"));
-// 获取指定时间范围内的航班数据
 var getTrips = function (_a) {
     var planeIds = _a.planeIds, origin = _a.origin, destination = _a.destination;
     return __awaiter(void 0, void 0, void 0, function () {
@@ -78,7 +77,7 @@ var getTrips = function (_a) {
                     })), (planeIds && {
                         destination: Array.isArray(destination) ? { in: destination } : destination,
                     }));
-                    return [4 /*yield*/, prisma_client_1.default.flight.findMany({
+                    return [4 /*yield*/, prisma_client_1.default.planeTrip.findMany({
                             where: __assign({}, filter),
                             orderBy: {
                                 departureTime: 'asc',
@@ -86,17 +85,17 @@ var getTrips = function (_a) {
                         })];
                 case 1:
                     res = _b.sent();
-                    flightsByPlane = res.reduce(function (acc, flight) {
-                        if (!acc[flight.plane]) {
-                            acc[flight.plane] = [];
+                    flightsByPlane = res.reduce(function (acc, planeTrip) {
+                        if (!acc[planeTrip.planeId]) {
+                            acc[planeTrip.planeId] = [];
                         }
-                        acc[flight.plane].push(__assign(__assign({}, flight), { arrivalTime: (0, moment_1.default)(flight.departureTime).add(flight.flightTime, 'minutes').toDate() }));
+                        acc[planeTrip.planeId].push(__assign(__assign({}, planeTrip), { arrivalTime: (0, moment_1.default)(planeTrip.departureTime).add(planeTrip.flightTime, 'minutes').toDate() }));
                         return acc;
                     }, {});
                     sortedFlightsByPlane = Object.keys(flightsByPlane)
                         .sort()
-                        .reduce(function (acc, plane) {
-                        acc[plane] = flightsByPlane[plane];
+                        .reduce(function (acc, planeId) {
+                        acc[planeId] = flightsByPlane[planeId];
                         return acc;
                     }, {});
                     return [2 /*return*/, sortedFlightsByPlane];
@@ -109,7 +108,7 @@ var parseDateTime = function (dateTimeStr) {
     var _a = dateTimeStr.split(' '), date = _a[0], time = _a[1];
     var _b = date.split('-').map(Number), month = _b[0], day = _b[1];
     var _c = time.split(':').map(Number), hour = _c[0], minute = _c[1];
-    return new Date(2024, month - 1, day, hour, minute); // 假定年份为 2025
+    return new Date(2024, month - 1, day, hour, minute);
 };
 var formatDateTime = function (date) {
     var month = String(date.getMonth() + 1).padStart(2, '0');
@@ -125,7 +124,7 @@ var calculateGroundTimes = function (data) {
         return new Date(trip.departureTime) > new Date(latest.departureTime) ? trip : latest;
     }, flattenTrips[0]);
     Object.entries(data).forEach(function (_a) {
-        var plane = _a[0], trips = _a[1];
+        var planeId = _a[0], trips = _a[1];
         var groundTimes = [];
         trips.forEach(function (currentTrip, i) {
             if (i < trips.length - 1) {
@@ -136,23 +135,24 @@ var calculateGroundTimes = function (data) {
                 var groundTime = (nextStart.getTime() - currentEnd.getTime()) / (1000 * 60);
                 var preTrip = flattenTrips.filter(function (t) {
                     return t.destination === currentTrip.origin &&
-                        t.plane !== currentTrip.plane &&
+                        t.planeId !== currentTrip.planeId &&
                         (0, moment_1.default)(t.departureTime).isBefore(currentTrip.departureTime);
                 })[0];
                 if (preTrip && preTrip.destination === 'HKG') {
+                    var curDuration = Math.round((currentTrip.departureTime.getTime() - preTrip.departureTime.getTime()) / (1000 * 60));
                     groundTimes.push({
                         id: currentTrip.id,
                         destination: currentTrip.origin,
-                        groundTime: currentTrip.departureTime,
-                        duration: Math.round((currentTrip.departureTime.getTime() - preTrip.departureTime.getTime()) / (1000 * 60)), // 地面时间长度，取整
+                        groundTime: preTrip.departureTime,
+                        duration: curDuration,
                     });
                 }
-                if (currentTrip.plane === 'PlaneB' && currentTrip.destination === 'HKG') {
+                if (currentTrip.planeId === 'PlaneB' && currentTrip.destination === 'HKG') {
                     groundTimes.push({
                         id: nextTrip.id,
                         destination: currentTrip.destination,
                         groundTime: currentTrip.arrivalTime,
-                        duration: 300, // 地面时间长度，取整
+                        duration: Math.round(groundTime),
                     });
                 }
                 else {
@@ -160,12 +160,12 @@ var calculateGroundTimes = function (data) {
                         id: nextTrip.id,
                         destination: currentTrip.destination,
                         groundTime: currentTrip.arrivalTime,
-                        duration: Math.round(groundTime), // 地面时间长度，取整
+                        duration: Math.round(groundTime),
                     });
                 }
             }
         });
-        result[plane] = groundTimes;
+        result[planeId] = groundTimes;
         groundTimes = [];
     });
     var planeA = result.PlaneA || [];
@@ -191,30 +191,59 @@ var calculateGroundTimes = function (data) {
             id: new bson_1.ObjectId(),
             destination: 'YVR',
             groundTime: '2024-01-01T23:30:00.000Z',
-            duration: 150, // 地面时间长度，取整
+            duration: 150,
         },
     ], false);
-    var updatedFlights = planeB.map(function (flight) {
-        if (flight.id === '67791f10a29312fd52350093') {
-            return __assign(__assign({}, flight), { duration: 300 });
+    var updatedFlights = planeB.map(function (planeTrip) {
+        if (planeTrip.duration === 431) {
+            return __assign(__assign({}, planeTrip), { duration: 300, groundTime: '2024-01-02T21:34:00.000Z' });
         }
-        return flight;
+        return planeTrip;
     });
     result.PlaneB = updatedFlights;
     return result;
 };
-// 计算地面时间
+var listGroundTimeData = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var res, flightsByPlane, sortedFlightsByPlane;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma_client_1.default.groundTime.findMany({
+                    where: {},
+                    orderBy: {
+                        groundTime: 'asc',
+                    },
+                })];
+            case 1:
+                res = _a.sent();
+                flightsByPlane = res.reduce(function (acc, planeTrip) {
+                    if (!acc[planeTrip.planeId]) {
+                        acc[planeTrip.planeId] = [];
+                    }
+                    acc[planeTrip.planeId].push(__assign({}, planeTrip));
+                    return acc;
+                }, {});
+                sortedFlightsByPlane = Object.keys(flightsByPlane)
+                    .sort()
+                    .reduce(function (acc, planeId) {
+                    acc[planeId] = flightsByPlane[planeId];
+                    return acc;
+                }, {});
+                return [2 /*return*/, sortedFlightsByPlane];
+        }
+    });
+}); };
 var getGroundTimes = function (_a) {
     var planeIds = _a.planeIds, origin = _a.origin, destination = _a.destination;
     return __awaiter(void 0, void 0, void 0, function () {
-        var trips, chart2Data;
+        var trips, groundTimeData, dbGroundTimeData;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, (0, exports.getTrips)({ planeIds: planeIds, origin: origin, destination: destination })];
                 case 1:
                     trips = _b.sent();
-                    chart2Data = calculateGroundTimes(trips);
-                    return [2 /*return*/, chart2Data];
+                    groundTimeData = calculateGroundTimes(trips);
+                    dbGroundTimeData = listGroundTimeData();
+                    return [2 /*return*/, dbGroundTimeData];
             }
         });
     });

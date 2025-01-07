@@ -14,34 +14,32 @@ datasource db {
 }
 
 model PlaneTrip {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
   origin        String
   destination   String
-  departureTime DateTime @map("departure_time")
-  flightTime    Int      @map("arrival_time")
-  createdAt     DateTime @map("created_at")
-  deletedAt     DateTime @map("deleted_at")
-  planeId       String
-  @@map("planeTrip")
+  departureTime DateTime  @map("departure_time")
+  flightTime    Int       @map("arrival_time")
+  createdAt     DateTime  @map("created_at")
+  deletedAt     DateTime? @map("deleted_at")
+  planeId       String    @map("plane_id")
+  groundId      String    @map("ground_id") @db.ObjectId
 
   // Relations
-  groundTime GroundTime[] @relation("PlaneGroundTime")
+  GroundTime GroundTime @relation(fields: [groundId], references: [id])
 
   @@index([planeId])
+  @@map("planeTrip")
 }
 
 model GroundTime {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  planeId     String
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   destination String
-  groundTime  String
+  planeId     String      @map("plane_id")
+  groundTime  DateTime
   duration    Int
-  createdAt   DateTime @map("created_at")
-  deletedAt   DateTime @map("deleted_at")
+  createdAt   DateTime    @map("created_at")
+  deletedAt   DateTime?   @map("deleted_at")
+  PlaneTrip   PlaneTrip[]
+
   @@map("groundTime")
-
-  // Relations
-  planTrip PlaneTrip[] @relation("PlanGroundTime", fields: [planeId], references: [planeId])
-
-  @@index([planeId])
 }

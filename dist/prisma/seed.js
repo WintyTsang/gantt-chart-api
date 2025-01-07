@@ -50,30 +50,36 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 console.log('Seeding Database');
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
-                console.log('Creating flight data...');
-                return [4 /*yield*/, prisma_client_1.default.flight.createMany({
+                _a.trys.push([1, 4, , 5]);
+                console.log('Creating planeTrip data...');
+                return [4 /*yield*/, prisma_client_1.default.planeTrip.createMany({
                         data: [
                             {
                                 origin: 'HKG',
                                 destination: 'NRT',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 01:25", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 270,
-                                plane: 'PlaneA',
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             {
                                 origin: 'NRT',
                                 destination: 'TPE',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 08:39", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 230,
-                                plane: 'PlaneA',
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             {
                                 origin: 'TPE',
                                 destination: 'HKG',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 13:50", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 120,
-                                plane: 'PlaneA',
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             // section 2
                             {
@@ -81,21 +87,27 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                                 destination: 'HKG',
                                 departureTime: moment_timezone_1.default.tz("2024-01-01 21:00", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 450,
-                                plane: 'PlaneB',
+                                planeId: 'PlaneB',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             {
                                 origin: 'HKG',
                                 destination: 'NGO',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 09:11", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 240,
-                                plane: 'PlaneB',
+                                planeId: 'PlaneB',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             {
                                 origin: 'NGO',
                                 destination: 'HKG',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 17:34", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 240,
-                                plane: 'PlaneB',
+                                planeId: 'PlaneB',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             // section 3
                             {
@@ -103,30 +115,113 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                                 destination: 'HKG',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 02:00", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 750,
-                                plane: 'PlaneC',
+                                planeId: 'PlaneC',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                             {
                                 origin: 'HKG',
                                 destination: 'NRT',
                                 departureTime: moment_timezone_1.default.tz("2024-01-02 19:00", "UTC").tz("Asia/Shanghai").toDate(),
                                 flightTime: 240,
-                                plane: 'PlaneC',
+                                planeId: 'PlaneC',
+                                createdAt: new Date(),
+                                deletedAt: null,
                             },
                         ],
                     })];
             case 2:
                 _a.sent();
                 console.log('Flight data created.');
-                return [3 /*break*/, 4];
+                console.log('Creating groundTime data...');
+                return [4 /*yield*/, prisma_client_1.default.groundTime.createMany({
+                        data: [
+                            {
+                                destination: 'HKG',
+                                groundTime: moment_timezone_1.default.tz("2024-01-01 21:00", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 265,
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'NRT',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 05:55", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 164,
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'TPE',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 12:29", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 81,
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'HKG',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 15:50", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 600,
+                                planeId: 'PlaneA',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'HKG',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 04:30", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 281,
+                                planeId: 'PlaneB',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'NGO',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 13:11", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 263,
+                                planeId: 'PlaneB',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'HKG',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 21:34", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 300,
+                                planeId: 'PlaneB',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'YVB',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 23:30", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 150,
+                                planeId: 'PlaneC',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'HKG',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 14:30", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 270,
+                                planeId: 'PlaneC',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            }, {
+                                destination: 'NRT',
+                                groundTime: moment_timezone_1.default.tz("2024-01-02 23:00", "UTC").tz("Asia/Shanghai").toDate(),
+                                duration: 150,
+                                planeId: 'PlaneC',
+                                createdAt: new Date(),
+                                deletedAt: null,
+                            },
+                        ],
+                    })];
             case 3:
-                error_1 = _a.sent();
-                console.error('Error creating flight data:', error_1);
-                return [3 /*break*/, 4];
+                _a.sent();
+                console.log('Ground Time data created.');
+                return [3 /*break*/, 5];
             case 4:
+                error_1 = _a.sent();
+                console.error('Error creating planeTrip data:', error_1);
+                return [3 /*break*/, 5];
+            case 5:
                 // eslint-disable-next-line no-console
                 console.log('Seeding Completed');
                 return [4 /*yield*/, prisma_client_1.default.$disconnect()];
-            case 5:
+            case 6:
                 _a.sent(); // 关闭数据库连接
                 return [2 /*return*/];
         }

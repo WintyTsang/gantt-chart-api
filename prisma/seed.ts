@@ -5,6 +5,7 @@ import prisma from './prisma-client';
 const main = async () => {
   // eslint-disable-next-line no-console
   console.log('Seeding Database');
+  const groundId = new ObjectId().toString();
 
   try {
     console.log('Creating planeTrip data...');
@@ -18,6 +19,7 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
         {
           origin: 'NRT',
@@ -26,7 +28,7 @@ const main = async () => {
           flightTime: 230,
           planeId: 'PlaneA',
           createdAt: new Date(),
-          deletedAt: null,
+          groundId,
         },
         {
           origin: 'TPE',
@@ -36,6 +38,7 @@ const main = async () => {
           planeId: 'PlaneA',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
         // section 2
         {
@@ -46,6 +49,7 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
         {
           origin: 'HKG',
@@ -55,6 +59,7 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
         {
           origin: 'NGO',
@@ -64,6 +69,7 @@ const main = async () => {
           planeId: 'PlaneB',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
         // section 3
         {
@@ -74,6 +80,7 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
         {
           origin: 'HKG',
@@ -83,6 +90,7 @@ const main = async () => {
           planeId: 'PlaneC',
           createdAt: new Date(),
           deletedAt: null,
+          groundId,
         },
       ],
     });
