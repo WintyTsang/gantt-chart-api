@@ -39,7 +39,7 @@ model GroundTime {
   createdAt   DateTime  @map("created_at")
   deletedAt   DateTime? @map("deleted_at")
   planTripId  String    @map("plan_trip_id") @db.ObjectId
-  PlaneTrip   PlaneTrip @relation(fields: [groundId], references: [id])
+  PlaneTrip   PlaneTrip @relation(fields: [planTripId], references: [id])
 
   @@map("groundTime")
 }
