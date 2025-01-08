@@ -6,6 +6,7 @@ const router = Router();
 router.get('/', (_: Request, res: Response) => { res.send('Welcome!'); });
 router.get('/trips', getTripsHandler);
 router.get('/ground-times', getGroundTimesHandler);
+router.get('/ground-times/lambda', getGroundTimesHandler);
 
 export default router;
 

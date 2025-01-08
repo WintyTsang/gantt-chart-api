@@ -21,10 +21,10 @@ model PlaneTrip {
   flightTime    Int       @map("arrival_time")
   createdAt     DateTime  @map("created_at")
   deletedAt     DateTime? @map("deleted_at")
-  planeId       String    @map("plane_id")
+  planeId       String
 
   // Relations
-  GroundTime GroundTime[]
+  GroundTime GroundTime?
 
   @@index([planeId])
   @@map("planeTrip")
@@ -32,14 +32,66 @@ model PlaneTrip {
 
 model GroundTime {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  planeId     String
   destination String
-  planeId     String    @map("plane_id")
   groundTime  DateTime
   duration    Int
   createdAt   DateTime  @map("created_at")
   deletedAt   DateTime? @map("deleted_at")
-  planTripId  String    @map("plan_trip_id") @db.ObjectId
-  PlaneTrip   PlaneTrip @relation(fields: [planTripId], references: [id])
+  planeTripId String    @map("plane_trip_id") @db.ObjectId @unique
+  PlaneTrip   PlaneTrip @relation(fields: [planeTripId], references: [id])
 
+  @@index([planeId])
   @@map("groundTime")
 }
+
+// generator client {
+//   provider        = "prisma-client-js"
+//   previewFeatures = ["mongodb"]
+// }
+
+// // datasource db {
+// //     provider = "mongodb"
+// //     url      = env("COMM_DATABASE_URL")
+// // }
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URL")
+// }
+
+// table a : 1 ,2. 3,4
+
+// table2 1, 2, 3
+
+// model PlaneTrip {
+//   id            String     @id @default(auto()) @map("_id") @db.ObjectId
+//   origin        String
+//   destination   String
+//   departureTime DateTime   @map("departure_time")
+//   flightTime    Int        @map("arrival_time")
+//   createdAt     DateTime   @map("created_at")
+//   deletedAt     DateTime?  @map("deleted_at")
+//   planeId       String     @map("plane_id")
+//   groundTimeId  String     @map("ground_time_id") @db.ObjectId
+//   GroundTime    GroundTime @relation(fields: [groundTimeId], references: [id])
+//   // Relations
+
+//   @@index([planeId])
+//   @@map("planeTrip")
+// }
+
+// model GroundTime {
+//   id          String    @id @default(auto()) @map("_id") @db.ObjectId
+//   destination String
+//   planeId     String    @map("plane_id")
+//   groundTime  DateTime
+//   duration    Int
+//   createdAt   DateTime  @map("created_at")
+//   deletedAt   DateTime? @map("deleted_at")
+
+//   PlaneTrip PlaneTrip[]
+
+//   @@index([planeId])
+//   @@map("groundTime")
+// }

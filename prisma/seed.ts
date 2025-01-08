@@ -26,6 +26,7 @@ const main = async () => {
           flightTime: 230,
           planeId: 'PlaneA',
           createdAt: new Date(),
+          deletedAt: null,
         },
         {
           origin: 'TPE',
@@ -87,111 +88,84 @@ const main = async () => {
     });
     console.log('Flight data created.');
     console.log('Creating groundTime data...');
-    await prisma.groundTime.createMany({
-      data: [
-        {
-          destination: 'HKG',
-          groundTime: moment.tz("2024-01-01 21:00", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 265,
-          planeId: 'PlaneA',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneA', destination: 'HKG' }
-          }
-        }, {
-          destination: 'NRT',
-          groundTime: moment.tz("2024-01-02 05:55", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 164,
-          planeId: 'PlaneA',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneA', destination: 'NRT' }
-          }
-        }, {
-          destination: 'TPE',
-          groundTime: moment.tz("2024-01-02 12:29", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 81,
-          planeId: 'PlaneA',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneA', destination: 'TPE' }
-          }
-        }, {
-          destination: 'HKG',
-          groundTime: moment.tz("2024-01-02 15:50", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 600,
-          planeId: 'PlaneA',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneA', destination: 'HKG' }
-          }
-        }, {
-          destination: 'HKG',
-          groundTime: moment.tz("2024-01-02 04:30", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 281,
-          planeId: 'PlaneB',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneB', destination: 'HKG' }
-          }
-        }, {
-          destination: 'NGO',
-          groundTime: moment.tz("2024-01-02 13:11", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 263,
-          planeId: 'PlaneB',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneB', destination: 'NGO' }
-          }
-        }, {
-          destination: 'HKG',
-          groundTime: moment.tz("2024-01-02 21:34", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 300,
-          planeId: 'PlaneB',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneB', destination: 'HKG' }
-          }
-        }, {
-          destination: 'YVB',
-          groundTime: moment.tz("2024-01-02 23:30", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 150,
-          planeId: 'PlaneC',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneA', destination: 'YVB' }
-          }
-        }, {
-          destination: 'HKG',
-          groundTime: moment.tz("2024-01-02 14:30", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 270,
-          planeId: 'PlaneC',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneC', destination: 'HKG' }
-          }
-        }, {
-          destination: 'NRT',
-          groundTime: moment.tz("2024-01-02 23:00", "UTC").tz("Asia/Shanghai").toDate(),
-          duration: 150,
-          planeId: 'PlaneC',
-          createdAt: new Date(),
-          deletedAt: null,
-          planeTrip: {
-            connect: { planeId: 'PlaneA', destination: 'NRT' }
-          }
-        },
-      ],
-    });
+    // await prisma.groundTime.createMany({
+    //   data: [
+    //     {
+    //       destination: 'HKG',
+    //       groundTime: moment.tz("2024-01-01 21:00", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 265,
+    //       planeId: 'PlaneA',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //       PlaneTrip:{
+    //         connect: {id: 1}
+    //       }
+    //     }, {
+    //       destination: 'NRT',
+    //       groundTime: moment.tz("2024-01-02 05:55", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 164,
+    //       planeId: 'PlaneA',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'TPE',
+    //       groundTime: moment.tz("2024-01-02 12:29", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 81,
+    //       planeId: 'PlaneA',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'HKG',
+    //       groundTime: moment.tz("2024-01-02 15:50", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 600,
+    //       planeId: 'PlaneA',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'HKG',
+    //       groundTime: moment.tz("2024-01-02 04:30", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 281,
+    //       planeId: 'PlaneB',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'NGO',
+    //       groundTime: moment.tz("2024-01-02 13:11", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 263,
+    //       planeId: 'PlaneB',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'HKG',
+    //       groundTime: moment.tz("2024-01-02 21:34", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 300,
+    //       planeId: 'PlaneB',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'YVB',
+    //       groundTime: moment.tz("2024-01-02 23:30", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 150,
+    //       planeId: 'PlaneC',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'HKG',
+    //       groundTime: moment.tz("2024-01-02 14:30", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 270,
+    //       planeId: 'PlaneC',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     }, {
+    //       destination: 'NRT',
+    //       groundTime: moment.tz("2024-01-02 23:00", "UTC").tz("Asia/Shanghai").toDate(),
+    //       duration: 150,
+    //       planeId: 'PlaneC',
+    //       createdAt: new Date(),
+    //       deletedAt: null,
+    //     },
+    //   ],
+    // });
     console.log('Ground Time data created.');
   } catch (error) {
     console.error('Error creating planeTrip data:', error);
