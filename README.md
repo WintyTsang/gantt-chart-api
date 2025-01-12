@@ -1,6 +1,7 @@
 # ![Gannt chart api]
 
-> Official NodeJS codebase that adheres to the [RealWorld](https://gothinkster.github.io/realworld/docs/specs/backend-specs/introduction) API spec.
+> Draft repo, no longer in use
+> New repo: refactoer gantt chart
 
 
 # Getting started
